@@ -1,0 +1,11 @@
+# config/clickhouse.yaml
+host: "localhost"
+port: 9000
+user: "olap"
+password: "secret"
+secure: false
+database: "bismuth"
+read_timeout: 60s
+compression:
+  enabled: true
+  level: 3
