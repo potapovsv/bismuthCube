@@ -1,0 +1,20 @@
+datasource:
+  name: "BismuthCube"
+  description: "OLAP Server with ClickHouse"
+  url: "http://localhost:8080/xmla"
+
+catalog:
+  name: "Sales"
+  description: "Sales data warehouse"
+
+server:
+  port: 8080
+  version: "0.0.2_m1"
+  product name: "BismuthCube"
+  isShowConfig: true
+# config.yml
+logging:
+  enabled: true
+#  file: "bismuth.log"  # Путь к файлу (пусто - только консоль)
+  file: ""  # Путь к файлу (пусто - только консоль)
+  level: "debug"        # Уровень (debug, info, warn, error)
