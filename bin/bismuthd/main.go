@@ -3,11 +3,14 @@ package main
 import (
 	"encoding/xml"
 	"github.com/gin-gonic/gin"
+	"github.com/potapovsv/bismuthCube/config"
 	"github.com/potapovsv/bismuthCube/protocols/xmla"
 	"net/http"
+	"strconv"
 )
 
 func main() {
+	_ = config.GetConfig()
 	r := gin.Default()
 
 	r.POST("/xmla", func(c *gin.Context) {
@@ -36,7 +39,7 @@ func main() {
         `, string(response))
 	})
 
-	err := r.Run(":8080")
+	err := r.Run(":" + strconv.Itoa(config.GetConfig().Server.Port))
 	if err != nil {
 		return
 	}

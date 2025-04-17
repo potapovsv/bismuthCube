@@ -1,0 +1,13 @@
+datasource:
+  name: "BismuthCube"
+  description: "OLAP Server with ClickHouse"
+  url: "http://localhost:8080/xmla"
+
+catalog:
+  name: "Sales"
+  description: "Sales data warehouse"
+
+server:
+  port: 8080
+  version: "0.0.1_m1"
+  product name: "BismuthCube"

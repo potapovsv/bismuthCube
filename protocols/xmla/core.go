@@ -3,6 +3,7 @@ package xmla
 import (
 	"encoding/xml"
 	"fmt"
+	"github.com/potapovsv/bismuthCube/config"
 )
 
 // SOAP структуры
@@ -22,24 +23,31 @@ type DiscoverRequest struct {
 
 // Обработчик Discover
 func HandleDiscover(requestType string) ([]byte, error) {
+	cfg := config.GetConfig()
+
 	switch requestType {
 	case "DISCOVER_DATASOURCES":
-		return []byte(`
-            <return xmlns="urn:schemas-microsoft-com:xml-analysis">
-                <row>
-                    <DataSourceName>BismuthCube</DataSourceName>
-                    <DataSourceDescription>OLAP server</DataSourceDescription>
-                    <URL>http://localhost:8080/xmla</URL>
-                </row>
-            </return>`), nil
+		return []byte(fmt.Sprintf(`
+			<return xmlns="urn:schemas-microsoft-com:xml-analysis">
+				<row>
+					<DataSourceName>%s</DataSourceName>
+					<DataSourceDescription>%s</DataSourceDescription>
+					<URL>%s</URL>
+				</row>
+			</return>`,
+			cfg.DataSource.Name,
+			cfg.DataSource.Description,
+			cfg.DataSource.URL)), nil
 	case "DBSCHEMA_CATALOGS":
-		return []byte(`
-            <return xmlns="urn:schemas-microsoft-com:xml-analysis">
-                <row>
-                    <CATALOG_NAME>BismuthCube</CATALOG_NAME>
-                    <DESCRIPTION>Main catalog</DESCRIPTION>
-                </row>
-            </return>`), nil
+		return []byte(fmt.Sprintf(`
+			<return xmlns="urn:schemas-microsoft-com:xml-analysis">
+				<row>
+					<CATALOG_NAME>%s</CATALOG_NAME>
+					<DESCRIPTION>%s</DESCRIPTION>
+				</row>
+			</return>`,
+			cfg.Catalog.Name,
+			cfg.Catalog.Description)), nil
 	default:
 		return nil, fmt.Errorf("unsupported request type: %s", requestType)
 	}
