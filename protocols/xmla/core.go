@@ -2,8 +2,10 @@ package xmla
 
 import (
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"github.com/potapovsv/bismuthCube/config"
+	"github.com/potapovsv/bismuthCube/core/logger"
 )
 
 // SOAP структуры
@@ -24,7 +26,11 @@ type DiscoverRequest struct {
 // Обработчик Discover
 func HandleDiscover(requestType string) ([]byte, error) {
 	cfg := config.GetConfig()
-
+	logger.Get().Debug("Handling discover request:", requestType)
+	if requestType == "" {
+		logger.Get().Warn("Empty request type")
+		return nil, errors.New("empty request type")
+	}
 	switch requestType {
 	case "DISCOVER_DATASOURCES":
 		return []byte(fmt.Sprintf(`

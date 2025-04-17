@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/json"
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"
@@ -9,6 +10,12 @@ import (
 	"strings"
 	"sync"
 )
+
+//type LoggingConfig struct {
+//	Enabled bool   `yaml:"enabled"`
+//	File    string `yaml:"file"`
+//	Level   string `yaml:"level"`
+//}
 
 type XmlaConfig struct {
 	DataSource struct {
@@ -27,6 +34,11 @@ type XmlaConfig struct {
 		Version     string `yaml:"version"`
 		ProductName string `yaml:"product name"`
 	} `yaml:"server"`
+	Logging struct {
+		Enabled bool   `yaml:"enabled"`
+		File    string `yaml:"file"`
+		Level   string `yaml:"level"`
+	} `yaml:"logging"`
 }
 
 var (
@@ -88,4 +100,8 @@ func loadConfig() *XmlaConfig {
 	}
 
 	return &cfg
+}
+func (c *XmlaConfig) JSON() string {
+	jsonData, _ := json.MarshalIndent(c, "", "  ")
+	return string(jsonData)
 }

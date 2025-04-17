@@ -9,5 +9,11 @@ catalog:
 
 server:
   port: 8080
-  version: "0.0.1_m1"
+  version: "0.0.2_m1"
   product name: "BismuthCube"
+# config.yml
+logging:
+  enabled: true
+#  file: "bismuth.log"  # Путь к файлу (пусто - только консоль)
+  file: ""  # Путь к файлу (пусто - только консоль)
+  level: "debug"        # Уровень (debug, info, warn, error)
