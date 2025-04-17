@@ -5,11 +5,18 @@ import (
 	"log"
 	"os"
 	"sync"
+	"time"
+	_ "time"
 )
 
 type Logger struct {
 	*log.Logger
 	file *os.File
+}
+type Trace struct {
+	operation string
+	start     time.Time
+	logger    *Logger
 }
 
 var (
@@ -68,6 +75,10 @@ func (l *Logger) Info(v ...interface{}) {
 	l.Printf("[INFO] %v", v)
 }
 
+func (l *Logger) InfoT(v ...interface{}) {
+	l.Printf("⏱️ [TIMING] %v", v)
+}
+
 func (l *Logger) Warn(v ...interface{}) {
 	l.Printf("[WARN] %v", v)
 }
@@ -99,4 +110,26 @@ func colorize(level string, msg string) string {
 		"ERROR": "\033[31m", // Red
 	}
 	return colors[level] + msg + "\033[0m"
+}
+
+func TrackTime(operation string) func() {
+	start := time.Now()
+	return func() {
+		duration := time.Since(start)
+		Get().InfoT(" %s took %v", operation, duration)
+	}
+}
+func TimeIt[T any](opName string, fn func() T) T {
+	defer TrackTime(opName)()
+	return fn()
+}
+func (l *Logger) Trace(operation string) *Trace {
+	return &Trace{
+		operation: operation,
+		start:     time.Now(),
+		logger:    l,
+	}
+}
+func (t *Trace) End() {
+	t.logger.InfoT("⏱️ %s completed in %v", t.operation, time.Since(t.start))
 }

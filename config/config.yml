@@ -11,6 +11,7 @@ server:
   port: 8080
   version: "0.0.2_m1"
   product name: "BismuthCube"
+  isShowConfig: true
 # config.yml
 logging:
   enabled: true

@@ -14,18 +14,19 @@ import (
 )
 
 func main() {
+	gin.SetMode(gin.ReleaseMode)
 	_ = config.GetConfig()
 	log := logger.Init(config.GetConfig().Logging.File != "")
 	r := gin.Default()
 	if config.GetConfig().Logging.File != "" {
 		log.Printf("📁 Logging to file: %s", config.GetConfig().Logging.File)
 	}
-
+	tr := log.Trace("Complex Calculation")
 	log.Printf("🚀 Starting BismuthCube server on port %d", config.GetConfig().Server.Port)
 	log.Printf("🚀 Version BismuthCube:%s", config.GetConfig().Server.Version)
-	log.Printf("Config:\n%s", config.GetConfig().JSON())
+	log.Printf("Config:\n%s", config.GetConfig().String())
 	log.Printf("🔗 XMLA endpoint: %s", config.GetConfig().DataSource.URL)
-
+	defer tr.End()
 	// Обработка graceful shutdown
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)

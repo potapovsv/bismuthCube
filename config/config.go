@@ -2,10 +2,12 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"strings"
 	"sync"
@@ -33,6 +35,7 @@ type XmlaConfig struct {
 		Port        int    `yaml:"port"`
 		Version     string `yaml:"version"`
 		ProductName string `yaml:"product name"`
+		//isShowConfig bool   `yaml:"isShowConfig"`
 	} `yaml:"server"`
 	Logging struct {
 		Enabled bool   `yaml:"enabled"`
@@ -104,4 +107,43 @@ func loadConfig() *XmlaConfig {
 func (c *XmlaConfig) JSON() string {
 	jsonData, _ := json.MarshalIndent(c, "", "  ")
 	return string(jsonData)
+}
+func (c *XmlaConfig) String() string {
+	var sb strings.Builder
+	//if GetConfig().Server.isShowConfig == false {
+	//	sb.WriteString("\n⚙️ Configuration:isShowConfig=false \n")
+	//	return sb.String()
+	//}
+
+	val := reflect.ValueOf(c).Elem()
+	typ := val.Type()
+
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Field(i)
+		fieldType := typ.Field(i)
+
+		// Получаем описание из тега
+		desc := fieldType.Tag.Get("desc")
+		if desc == "" {
+			desc = fieldType.Name
+		}
+
+		sb.WriteString(fmt.Sprintf("\n%s:\n", desc))
+
+		if field.Kind() == reflect.Struct {
+			for j := 0; j < field.NumField(); j++ {
+				nestedField := field.Field(j)
+				nestedType := field.Type().Field(j)
+
+				nestedDesc := nestedType.Tag.Get("desc")
+				if nestedDesc == "" {
+					nestedDesc = nestedType.Name
+				}
+
+				sb.WriteString(fmt.Sprintf("  - %s: %v\n", nestedDesc, nestedField.Interface()))
+			}
+		}
+	}
+
+	return sb.String()
 }
